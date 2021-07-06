@@ -60,6 +60,11 @@ export const Shaders = function() {
   // These shaders should return an index into the Master Palette (64 colors)
   // They don't add any new colors the NES cannot already generate.
 
+  // Arguments for Shaders:
+  // bgIndex and spIndex should be 0..3 values without attribute information applied.
+  // bgColor and spColor should be indexes into the Master Palette (64 colors)
+  // decision should be 1 if the multiplexer is wanting to the sprite pixel to show, and 0 for the background pixel
+  // showLeft should be 0 if the left 8 pixels of the screen are currently masked
 
   // First, the standard shader, as a reference:
   function standard(scanLine, fineY, dot, fineX, bgIndex, bgColor, spIndex, spColor, decision, showLeft) {
