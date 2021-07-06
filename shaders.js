@@ -21,7 +21,7 @@ export const Shaders = function() {
     }
   }
 
-  var fxState = { // State that must be tracked during pipeline processing.
+  var fxSpectralState = { // State that must be tracked during pipeline processing.
     spShadow: 0,
     bgShadow: 0,
     lastColor: 0,
@@ -79,34 +79,34 @@ export const Shaders = function() {
     var mute = false;
     if ((dot <= 2) || ((!showLeft) && (dot <= 9))) {
       if (bgIndex) {
-        fxState.phase = 7; // half way
+        fxSpectralState.phase = 7; // half way
       } else {
-        fxState.phase = 14;
+        fxSpectralState.phase = 14;
       }
-      fxState.bgShadow = 0;
-      fxState.lastColor = bgColor;
+      fxSpectralState.bgShadow = 0;
+      fxSpectralState.lastColor = bgColor;
       mute = true;
     }
-    if (decision) fxState.spShadow = Math.min(9, fxState.spShadow + 5);
-    if ((bgColor == fxState.lastColor)) {
+    if (decision) fxSpectralState.spShadow = Math.min(9, fxSpectralState.spShadow + 5);
+    if ((bgColor == fxSpectralState.lastColor)) {
       if (bgIndex) { // not universal background
-        if (fxState.phase) fxState.phase--;
+        if (fxSpectralState.phase) fxSpectralState.phase--;
       } else {
-        fxState.phase = 0;
+        fxSpectralState.phase = 0;
       }
     } else {
-      fxState.lastColor = bgColor;
+      fxSpectralState.lastColor = bgColor;
       if (!mute) {
-        fxState.phase = 14;
+        fxSpectralState.phase = 14;
         if ((bgIndex == 0) && (fxCache[1][bgColor + 64] != 0x2D)) {
-          fxState.bgShadow = 3;//Math.min(9, fxState.bgShadow + 5);
+          fxSpectralState.bgShadow = 3;
         }
       }
     }
-    if (fxState.spShadow || fxState.bgShadow) {
-      if (fxState.spShadow) fxState.spShadow--;
-      if (fxState.spShadow) fxState.spShadow--;
-      if (fxState.bgShadow) fxState.bgShadow--;
+    if (fxSpectralState.spShadow || fxSpectralState.bgShadow) {
+      if (fxSpectralState.spShadow) fxSpectralState.spShadow--;
+      if (fxSpectralState.spShadow) fxSpectralState.spShadow--;
+      if (fxSpectralState.bgShadow) fxSpectralState.bgShadow--;
       if (fxCache[1][bgColor + 64] == 0x2D) {
         dither = true;
       }
@@ -114,9 +114,9 @@ export const Shaders = function() {
     if (! (decision || (settings.spectral.fxTransparency && spIndex))) {
       // The following mask comparison is hacky, but improves SMB, SMB2, and others.
       if ((bgColor & 0x0F) != 10) {
-        pshift = 5 - Math.floor( Math.abs(fxState.phase - 7) / 3 );
+        pshift = 5 - Math.floor( Math.abs(fxSpectralState.phase - 7) / 3 );
       }
-      if (fxState.spShadow || fxState.bgShadow) {
+      if (fxSpectralState.spShadow || fxSpectralState.bgShadow) {
         if (color <= 0x10) {
           color += 64;
         }
